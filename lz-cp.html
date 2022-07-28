@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="renderer" content="webkit">
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <script src="js/jquery.min.js"></script>
+    <title>首页</title>
+	
+
+</head>
+<body>
+	
+<style>
+    *{
+        box-sizing: border-box;
+        
+    }
+    .content{
+        width: 1250px;
+        margin: 0 auto;
+        margin-top: 50px;
+        overflow: hidden;
+    }
+    .block-z{
+      overflow: hidden;
+      margin-right: -20px;
+
+      margin-bottom: -20px;
+      margin-top: 0;
+    }
+    .block-z-li{
+      float: left;
+      margin-right: 20px;
+      margin-bottom: 20px;
+    }
+    .block{
+        width: 610px;
+        overflow: hidden;
+        float: left;
+    }
+    .blk{
+        width: 150px;
+        height: 150px;
+        float: left;
+        border: 2px solid #000;
+        position: relative;
+        text-align: center;
+        font-size: 20px;
+        text-align: center;
+        line-height: 150px;
+        color:blue;
+        margin-right: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .blk-up{
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
+        color: #f00;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -15px;
+        text-align: center;
+        line-height: 30px;
+    }
+    .blk-right{
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
+        color: #f00;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -15px;
+        text-align: center;
+        line-height: 30px;
+    }
+    .blk-down{
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
+        color: #f00;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        margin-left: -15px;
+        text-align: center;
+        line-height: 30px;
+    }
+    .blk-left{
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
+        color: #f00;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -15px;
+        text-align: center;
+        line-height: 30px;
+    }
+    .my-block{
+        width: 200px;
+        overflow-y: scroll;
+        float: left;
+        min-height: 1px;
+        max-height: 800px;
+        margin-right: 100px;
+    }
+    .you-block{
+        width: 200px;
+        overflow: hidden;
+        float: left;
+        min-height: 1px;
+        max-height: 800px;
+        overflow-y: scroll;
+    }
+    .my-bg{
+        background-color: aqua;
+        /* animation: cg 1s; */
+    }
+    .you-bg{
+        background-color: burlywood;
+        /* animation: cg 1s; */
+    }
+    @keyframes cg
+    {
+        from {transform:rotateY(0deg);}
+        to {transform:rotateY(360deg);}
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<div class="content" id='app' v-cloak>
+
+
+    <div class="my-block">
+        <div class="blk block-z-li" v-bind:class="item.is_choose==1 ? 'my-bg' : ''"  v-for="(item,key) in mypk" @click="choosePk(key,1)">
+            <div class="blk-up">{{ item.u }}</div>
+            <div class="blk-right">{{ item.r }}</div>
+            <div class="blk-down">{{ item.d }}</div>
+            <div class="blk-left">{{ item.l }}</div>
+            {{ item.name }}
+        </div>
+    </div>
+
+
+    <div class="block  block-z">
+        <div class="blk block-z-li" v-bind:class="item.belong==1 ? 'my-bg' : (item.belong == 2 ? 'you-bg' : '')" v-for="(item,key) in nowpk" @click="pushPk(key)">
+            <div class="blk-up">{{ item.u }}</div>
+            <div class="blk-right">{{ item.r }}</div>
+            <div class="blk-down">{{ item.d }}</div>
+            <div class="blk-left">{{ item.l }}</div>
+            {{ item.name }}
+        </div>
+    </div>
+
+    <div class="you-block">
+        <div class="blk block-z-li" v-bind:class="item.is_choose==1 ? 'you-bg' : ''" v-for="(item,key) in youpk" @click="choosePk(key,2)">
+            <div class="blk-up">{{ item.u }}</div>
+            <div class="blk-right">{{ item.r }}</div>
+            <div class="blk-down">{{ item.d }}</div>
+            <div class="blk-left">{{ item.l }}</div>
+            {{ item.name }}
+        </div>
+    </div>
+</div>
+
+
+<!-- 引入组件库 -->
+<script>
+
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            nowpk:[
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+
+            ],
+            mypk:[
+                {'id':'ws','name':'祝融','u':3,'r':2,'d':8,'l':8,'belong':1,'is_choose':0},
+                {'id':'jj','name':'孟获','u':7,'r':4,'d':2,'l':8,'belong':1,'is_choose':0},
+                {'id':'jj','name':'张飞','u':2,'r':3,'d':8,'l':8,'belong':1,'is_choose':0},
+                {'id':'qx','name':'陆逊','u':6,'r':6,'d':5,'l':5,'belong':1,'is_choose':0},
+                {'id':'dc','name':'吕蒙','u':6,'r':6,'d':6,'l':6,'belong':1,'is_choose':0},
+                {'id':'gw','name':'曹仁','u':6,'r':6,'d':6,'l':6,'belong':1,'is_choose':0},
+                {'id':'hz','name':'周泰','u':7,'r':4,'d':5,'l':8,'belong':1,'is_choose':0},
+                {'id':'yz','name':'郭嘉','u':2,'r':3,'d':3,'l':2,'belong':1,'is_choose':0,'is_use':0},
+                {'id':'tx','name':'马超','u':2,'r':7,'d':2,'l':8,'belong':1,'is_choose':0},
+
+            ],
+            youpk:[
+                {'id':'ws','name':'祝融','u':3,'r':2,'d':8,'l':8,'belong':2,'is_choose':0},
+                {'id':'jj','name':'孟获','u':7,'r':4,'d':2,'l':8,'belong':2,'is_choose':0},
+                {'id':'jj','name':'张飞','u':2,'r':3,'d':8,'l':8,'belong':2,'is_choose':0},
+                {'id':'ym','name':'许诸','u':8,'r':4,'d':4,'l':8,'belong':2,'is_choose':0,'add_point':1},
+                {'id':'ym-zy','name':'赵云','u':5,'r':6,'d':6,'l':6,'belong':2,'is_choose':0,'add_point':2},
+                {'id':'yh','name':'周瑜','u':5,'r':7,'d':6,'l':6,'belong':2,'is_choose':0},
+                {'id':'hz','name':'周泰','u':7,'r':4,'d':5,'l':8,'belong':2,'is_choose':0},
+                {'id':'xz','name':'甘宁','u':7,'r':3,'d':8,'l':3,'belong':2,'is_choose':0},
+                {'id':'qg','name':'貂蝉','u':2,'r':3,'d':3,'l':3,'belong':2,'is_choose':0,'can_life':1},
+                {'id':'mf','name':'荀彧','u':2,'r':3,'d':3,'l':3,'belong':2,'is_choose':0,'can_life':1},
+            ],
+            temppk:{},
+            istemp:1,
+            tempkey:0,
+            tempBelong:1
+        },
+        methods:{
+            //选择
+            choosePk:function(chsKey,type){
+                //区分对手
+                if(type == 1){
+                    var data = this.mypk;
+                }else{
+                    var data = this.youpk;
+                }
+
+
+
+
+                //判断是否选择
+                if(this.istemp == 1){
+                    //选择
+                    if(type == 1){
+                        this.mypk[chsKey]['is_choose'] = 1;
+                    }else{
+                        this.youpk[chsKey]['is_choose'] = 1;
+                    }
+
+                    this.temppk = data[chsKey];
+                    this.istemp = 2;
+                    this.temptype = type;
+                    this.tempkey = chsKey;
+
+                }else{
+                    if(type == 1){
+                        this.mypk[chsKey]['is_choose'] = 0;
+                    }else{
+                        this.youpk[chsKey]['is_choose'] = 0;
+                    }
+                    //取消选择
+                    this.tempkey = 0;
+                    this.istemp = 1;
+                    this.temptype = type;
+                    this.tempBelong = 1;
+                    this.temppk = {};
+                }
+            },
+            //放置
+            pushPk:function(pushKey){
+                var pk = this.nowpk[pushKey];
+                //已放置
+                if(Object.keys(pk).length !== 0){
+                    return;
+                }
+                if(this.istemp == 1){
+                    return;
+                }
+                //放置
+                var chsPk = this.temppk;
+
+
+                //初始缓存数据
+                if(this.temptype == 1){
+                    this.mypk.splice(this.tempkey, 1);
+                }else{
+                    this.youpk.splice(this.tempkey, 1);
+                }
+                this.nowpk[pushKey] = this.temppk;
+
+                this.tempkey = 0;
+                this.istemp = 1;
+                this.tempBelong = 1;
+                this.temppk = {};
+
+                //位置判断
+                this.makePk(pushKey,chsPk,0);
+
+
+            },
+            //判断位置
+            makePk:function(pushKey,chsPk,is_agian){
+                var makearr = [];
+                var up = pushKey - 3;
+                var down = parseInt(pushKey) + 3;
+                var left = pushKey - 1;
+                var right = parseInt(pushKey) + 1;
+                if(up >= 0){
+                    //处理上面
+                    makearr.push(up);
+                }
+                if(down <= 8){
+                    //处理下面
+                    makearr.push(down);
+                }
+                if(left >= 0 && parseInt(left/3) == parseInt(pushKey/3)){
+                    //处理左边
+                    makearr.push(left);
+                }
+                if(right <= 8 && parseInt(right/3) == parseInt(pushKey/3)){
+                    //处理右边
+                    makearr.push(right);
+                }
+
+                this.setPk(pushKey,chsPk,makearr,is_agian);
+            },
+            //处理翻面等效果
+            setPk:function(pushKey,chsPk,makearr,is_agian){
+                var isjj = 0;//是否存在警戒
+                var jjarr = [];//警戒数
+                var downpoint = 0;//临时加点
+                var uppoint = 0;//临时加点
+                var belong = chsPk['belong'];
+                var pushid = chsPk['id'];
+                var txtotal = 0;
+                var txarr = [];
+                if(is_agian == 0){
+                    //初次进场
+                    for(key in makearr){
+                        if(Object.keys(this.nowpk[makearr[key]]).length !== 0){
+                            var fpk = this.nowpk[makearr[key]];
+                            if(fpk['belong'] != chsPk['belong']){
+                                txtotal++;
+                                txarr.push(makearr[key]);
+                            }
+                            //判断是否威慑
+                            if(fpk['id'] == 'ws' && fpk['belong'] != chsPk['belong']){
+                                downpoint--;
+                            }
+                            //判断是否鼓舞
+                            if(fpk['id'] == 'gw' && fpk['belong'] == chsPk['belong']){
+                                uppoint++;
+                            }
+                            if(fpk['id'] == 'jj' && fpk['belong'] != chsPk['belong']){
+                                isjj = 1;
+                                jjarr.push(makearr[key]);
+                            }
+                        }
+                    }
+
+
+                    //优先处理威慑扣点
+                    chsPk = this.setpoint(chsPk,downpoint);
+
+                    //处理警戒
+                    if(isjj == 1){
+
+                        var isOver = this.comparejj(chsPk,pushKey,jjarr);
+                        if(!isOver){
+                            //判断貂蝉倾国效果
+
+                            chsPk['belong'] = belong==1 ? 2 : 1;
+
+                            //处理遗志
+                            if(pushid == 'yz'){
+                                this.setyz(chsPk);
+                            }
+
+
+                            return;
+                        }
+
+                    }
+                    //处理突袭
+                    if(pushid == 'tx'){
+                        if(txtotal == 1){
+                            //交换位置，重新攻击
+                            var oldkey = parseInt(txarr[0]);
+                            // console.log(this.nowpk[oldkey]);
+                            this.nowpk[pushKey] = this.nowpk[oldkey];
+                            this.nowpk[oldkey] = chsPk;
+                            this.makePk(oldkey,chsPk,1);
+
+                            return;
+                        }
+                    }
+
+
+
+                    //处理业火
+                    if(pushid == 'yh'){
+                        this.setyh(belong);
+                    }
+
+                    //处理鼓舞
+                    chsPk = this.setpoint(chsPk,uppoint);
+                }
+
+
+
+
+                //处理赵云
+                if(pushid == 'ym-zy' && is_agian == 0){
+                    chsPk = this.setymzy(chsPk,pushKey,belong);
+                }
+                // console.log(pushKey,chsPk);
+                //处理普通翻面
+                var compareres = this.compare(chsPk,pushKey);
+
+                //处理勇猛
+                if(pushid == 'ym' && is_agian == 0){
+                    chsPk = this.setym(chsPk);
+                }
+
+                //处理酣战
+                if(pushid == 'hz' && compareres.length > 0){
+                    for(key in compareres){
+                        this.makePk(compareres[key],this.nowpk[compareres[key]],1);
+                    }
+                }
+                //处理遗志
+                if(compareres.length > 0){
+                    for(key in compareres){
+                        if(this.nowpk[compareres[key]]['id'] == 'yz'){
+                            this.setyz(this.nowpk[compareres[key]]);
+                        }
+                    }
+                }
+                this.nowpk[pushKey] = chsPk;
+                //处理协战
+                if(pushid == 'xz' && compareres.length > 0){
+
+                    this.setxz(makearr,compareres,belong);
+                }
+                //回合结束，恢复幕府效果
+                for(key in this.nowpk){
+                    if(Object.keys(this.nowpk[key]).length !== 0 && this.nowpk[key]['id'] == 'mf'){
+                        this.nowpk[key]['can_life'] = 1;
+                    }
+                }
+
+
+
+            },
+
+            //处理点数
+            setpoint:function(chsPk,point){
+                chsPk['u'] = parseInt(chsPk['u']) + parseInt(point);
+                chsPk['r'] = parseInt(chsPk['r']) + parseInt(point);
+                chsPk['d'] = parseInt(chsPk['d']) + parseInt(point);
+                chsPk['l'] = parseInt(chsPk['l']) + parseInt(point);
+                return chsPk;
+            },
+            //处理普通翻面
+            compare:function(leftPk,pushKey){
+                var belong = leftPk['belong'];
+                var up = pushKey - 3;
+                var down = parseInt(pushKey) + 3;
+                var left = pushKey - 1;
+                var right = parseInt(pushKey) + 1;
+                var makesuc = [];
+                if(up >=0 ){
+
+                    //处理上面
+                    var setres = this.checkcompare(leftPk['u'],this.nowpk[up]['d'],leftPk,this.nowpk[up],up);
+                    if(setres && this.nowpk[up]['belong'] != leftPk['belong']){
+                        if(Object.keys(this.nowpk[up]).length !== 0){
+                            this.nowpk[up]['belong'] = belong;
+                            makesuc.push(up);
+                        }
+                    }
+
+                }
+
+                if(down <= 8){
+                    //处理下面
+                    var setres = this.checkcompare(leftPk['d'],this.nowpk[down]['u'],leftPk,this.nowpk[down],down);
+                    if(setres && this.nowpk[down]['belong'] != leftPk['belong']){
+                        if(Object.keys(this.nowpk[down]).length !== 0){
+                            this.nowpk[down]['belong'] = belong;
+                            makesuc.push(down);
+                        }
+                    }
+                }
+
+                if(left >=0 && parseInt(left/3) == parseInt(pushKey/3)){
+                    //处理左边
+                    var setres = this.checkcompare(leftPk['l'],this.nowpk[left]['r'],leftPk,this.nowpk[left],left);
+                    if(setres && this.nowpk[left]['belong'] != leftPk['belong']){
+                        if(Object.keys(this.nowpk[left]).length !== 0){
+                            this.nowpk[left]['belong'] = belong;
+                            makesuc.push(left);
+                        }
+                    }
+
+                }
+                // console.log(parseInt(right/3),parseInt(pushKey/3));
+                if(right <= 8 && parseInt(right/3) == parseInt(pushKey/3)){
+                    //处理右边
+
+                    var setres = this.checkcompare(leftPk['r'],this.nowpk[right]['l'],leftPk,this.nowpk[right],right);
+                    if(setres && this.nowpk[right]['belong'] != leftPk['belong']){
+                        if(Object.keys(this.nowpk[right]).length !== 0){
+                            this.nowpk[right]['belong'] = belong;
+                            makesuc.push(right);
+                        }
+                    }
+
+                }
+                return makesuc;
+
+            },
+            //处理警戒
+            comparejj:function(leftPk,pushKey,jjarr){
+                var up = pushKey - 3;
+                var down = parseInt(pushKey) + 3;
+                var left = pushKey - 1;
+                var right = parseInt(pushKey) + 1;
+                var isOver = false;
+                if(up >=0 &&  jjarr.includes(up)){
+                    //处理上面
+                    var temp = leftPk['u'] - this.nowpk[up]['d'];
+
+                }
+                if(down <=8 && jjarr.includes(down)){
+                    //处理下面
+                    var temp = leftPk['d'] - this.nowpk[down]['u'];
+
+                }
+                if(left >=0 && parseInt(left/3) == parseInt(pushKey/3) && jjarr.includes(left)){
+                    //处理左边
+                    var temp = leftPk['l'] - this.nowpk[left]['r'];
+
+                }
+                if(right <=8 && parseInt(right/3) == parseInt(pushKey/3) && jjarr.includes(right)){
+                    //处理右边
+                    var temp = leftPk['r'] - this.nowpk[right]['l'];
+
+                }
+                var res = temp > 0;
+                if(leftPk['id'] == 'qx'){
+                    res = temp < 0;
+                }
+
+
+                if(!res){
+                    //判断貂蝉倾国效果
+                    if(leftPk['id'] == 'qg'){
+                        res = this.setqg(leftPk);
+                    }
+
+                }
+
+                return res;
+
+
+            },
+            //处理大小比较
+            checkcompare:function(left,right,leftpk,rightpk,rightKey){
+
+                //判断是否洞察
+                if(leftpk['id'] == 'dc'){
+                    //取守方最小值
+                    right = Math.min(rightpk['u'],rightpk['d'],rightpk['l'],rightpk['r']);
+                }
+                var temp = left - right;
+                var res = temp > 0;
+                //判断是否存在谦逊
+                if(leftpk['id'] == 'qx' || rightpk['id'] == 'qx'){
+                    res = temp < 0;
+                }
+                if(!res){
+                    //判断貂蝉倾国效果
+                    if(rightpk['id'] == 'qg'){
+                        res = this.setqg(rightpk);
+                    }
+                    //判断荀彧幕府
+                    if(rightpk['id'] == 'mf'){
+                        res = this.setmf(rightpk,rightKey);
+                    }
+                }
+
+                return res;
+            },
+            //设置业火
+            setyh:function(mybelong){
+                for(let i = 0; i < this.nowpk.length; i++){
+                    if(this.nowpk[i]['belong'] != null && this.nowpk[i]['belong'] != mybelong){
+                        this.nowpk[i]['u'] = this.nowpk[i]['u'] - 1 > 0? this.nowpk[i]['u'] - 1: 0;
+                        this.nowpk[i]['r'] = this.nowpk[i]['r'] - 1 > 0? this.nowpk[i]['r'] - 1: 0;
+                        this.nowpk[i]['d'] = this.nowpk[i]['d'] - 1 > 0? this.nowpk[i]['d'] - 1: 0;
+                        this.nowpk[i]['l'] = this.nowpk[i]['l'] - 1 > 0? this.nowpk[i]['l'] - 1: 0;
+                    }
+                }
+            },
+            //设置勇猛
+            setym(chsPk){
+                chsPk['u'] = parseInt(chsPk['u']) + parseInt(chsPk['add_point']);
+                chsPk['r'] = parseInt(chsPk['r']) + parseInt(chsPk['add_point']);
+                chsPk['d'] = parseInt(chsPk['d']) + parseInt(chsPk['add_point']);
+                chsPk['l'] = parseInt(chsPk['l']) + parseInt(chsPk['add_point']);
+                return chsPk;
+            },
+            //设置赵云
+            setymzy:function(chsPk,pushKey,belong){
+                var up = pushKey - 3;
+                var down = parseInt(pushKey) + 3;
+                var left = pushKey - 1;
+                var right = parseInt(pushKey) + 1;
+                var yong = 0;
+                if(up >=0 && this.nowpk[up]['belong'] != null && this.nowpk[up]['belong'] != belong) yong++;
+                if(down <= 8 && this.nowpk[down]['belong'] != null && this.nowpk[down]['belong'] != belong) yong++;
+                if(left >=0 && this.nowpk[left]['belong'] != null && this.nowpk[left]['belong'] != belong) yong++;
+                if(right <=8 && this.nowpk[right]['belong'] != null && this.nowpk[right]['belong'] != belong) yong++;
+
+                if(yong >= 2) {
+                    console.log(chsPk['add_point']);
+                    chsPk['u'] = parseInt(chsPk['u']) + parseInt(chsPk['add_point']);
+                    chsPk['r'] = parseInt(chsPk['r']) + parseInt(chsPk['add_point']);
+                    chsPk['d'] = parseInt(chsPk['d']) + parseInt(chsPk['add_point']);
+                    chsPk['l'] = parseInt(chsPk['l']) + parseInt(chsPk['add_point']);
+                }
+                return chsPk;
+            },
+            //设置遗志
+            setyz(chsPk){
+                if(chsPk['is_use'] != 0){
+                    return;
+                }
+                var belong = chsPk['belong']==1 ? 2 : 1;
+                if(belong == 1){
+                    //自身手牌
+                    for(key in this.mypk){
+                        this.mypk[key]['u']++;
+                        this.mypk[key]['d']++;
+                        this.mypk[key]['l']++;
+                        this.mypk[key]['r']++;
+                    }
+                }else{
+                    //对手手牌
+                    for(key in this.youpk){
+                        this.youpk[key]['u']++;
+                        this.youpk[key]['d']++;
+                        this.youpk[key]['l']++;
+                        this.youpk[key]['r']++;
+
+                    }
+                }
+
+            },
+            //设置协站
+            setxz:function(makearr,compareres,mybelong){
+                // includes
+                for(key in makearr){
+                    if(Object.keys(this.nowpk[makearr[key]]).length !== 0){
+                        if(this.nowpk[makearr[key]]['belong'] == mybelong && !compareres.includes(makearr[key])){
+                            //触发效果
+                            this.makePk(makearr[key],this.nowpk[makearr[key]],1);
+                        }
+                    }
+                }
+            },
+
+            //设置倾国（true抵抗成功 false抵抗失败）
+            setqg:function(chsPk){
+                if(chsPk['can_life'] == 1){
+                    chsPk['can_life'] = 0;
+                    return true;
+                }
+                return false;
+            },
+            //设置幕府（true抵抗成功 false抵抗失败）
+            setmf:function(chsPk,pushKey){
+                var up = pushKey - 3;
+                var down = parseInt(pushKey) + 3;
+                var left = pushKey - 1;
+                var right = parseInt(pushKey) + 1;
+                var mf = 0;
+                if(up >=0 && this.nowpk[up]['belong'] != null && this.nowpk[up]['belong'] == chsPk['belong']) mf++;
+                if(down <= 8 && this.nowpk[down]['belong'] != null && this.nowpk[down]['belong'] == chsPk['belong']) mf++;
+                if(left >=0 && this.nowpk[left]['belong'] != null && this.nowpk[left]['belong'] == chsPk['belong']) mf++;
+                if(right <=8 && this.nowpk[right]['belong'] != null && this.nowpk[right]['belong'] == chsPk['belong']) mf++;
+
+                if(chsPk['can_life'] == 1 && mf > 0){
+                    chsPk['can_life'] = 0;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+    })
+
+    
+</script>
+
+
+</body>
+</html>
+
